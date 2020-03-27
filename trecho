@@ -1,0 +1,167 @@
+[globals]
+
+; 2020
+PSTN=DAHDI/1
+
+
+NET=DAHDI/1
+Islas=DAHDI/2
+Interfone=DAHDI/5	; Ramal do interfone no escritorio
+Fone=DAHDI/5		; Ramal do telefone no escritorio
+VOIPL=PJSIP/599		; Intelbras VOIP via SIP LOCAL
+VOIPR=PJSIP/5999	; Intelbras VOIP via SIP REMOTO
+CelularA=IAX2/60000
+;
+; tempos de discagem
+;
+DAHDIDIALTIMEOUT=60
+PJSIPDIALTIMEOUT=60
+IAXDIALTIMEOUT=60
+
+QUEUETIMEOUT=120		; Timeout a ser usado nas filas de atendimento
+			; depois desse tempo as chamadas vao para o voice mail
+MBOXFONE=4001
+MBOXISLAS=4002
+
+[general]
+autofalltrough=yes
+callcounter=yes
+
+[from-pstn]
+exten => s,1,NoOp(Entrando em default)
+    same => n,Verbose(,default)
+    same => n,Playback(hello-world)
+    same => n,Playback(hello-world)
+    same => n,Playback(hello-world)
+    same => n,Hangup()
+
+
+
+
+
+;============================================================
+[ToBeDefined]
+;
+; para chamadas nao autenticadas via PJSIP: Buraco Negro
+; 2016/jun
+;
+
+
+
+
+;============================================================
+; sub()	arg1	extension
+;	arg2	channel
+;	arg3	dial timeout
+;
+[subRamaisInternos]
+exten => start,1,NoOp(Ramal ${ARG1})
+    same => n,Set(CHANNEL(language)=br)
+    same => n,Verbose(,Chamando Ramal ${ARG1} por ${ARG3}s)
+    same => n,Dial(${ARG2},${ARG3})
+    same => n,Verbose(,Discagem falhou. Status = ${DIALSTATUS})
+    same => n,VoiceMail(${ARG1}@default,u)
+    same => n,Hangup()
+
+
+;============================================================
+[Queues]
+exten => 7001,1,Verbose(2,${CALLERID(all)} entrando na fila "Interfone")
+    same => n,Queue(Interfone,n,,,${QUEUETIMEOUT})
+    same => n,VoiceMail(${MBOXISLAS}@default,u)
+    same => n,Hangup()
+
+exten => 7002,1,Verbose(2,${CALLERID(all)} Chamada na fila "Fixo")
+    same => n,Queue(Fixo,n,,,${QUEUETIMEOUT})
+    same => n,VoiceMail(${MBOXFONE}@default,u)
+    same => n,Hangup()
+
+
+;============================================================
+[RamaisISLAS]
+;
+; Ramais Islas: 1 para torre A 2 para torre B mais o numero do apartamento
+;		11A = 111
+;		101A = 1101
+;		262A = 2262
+;
+exten => 44,1,NoOp(Zelador)
+    same => n,Verbose(2,Zelador ${EXTEN})
+    same => n,SayDigits(${EXTEN})
+    same => n,Dial(${Islas}/${EXTEN},20)
+    same => n,Hangup()
+ 
+; 
+; 94 - portaria
+;
+exten => 94,1,NoOp(Portaria)
+    same => n,Verbose(,Vai ligar na portaria via ${EXTEN})
+    same => n,Verbose(,Vai ligar para ${EXTEN})
+    same => n,SayDigits(${EXTEN})
+    same => n,Dial(${Islas}/94,20)
+    same => n,Hangup()
+
+;
+;	130 	salao de festas malhorca
+;
+exten => 130,1,NoOp(SalaoMalhorca)
+    same => n,Verbose(,Ramal 130 ${EXTEN})
+    same => n,SayDigits(${EXTEN})
+    same => n,Dial(${Islas}/130,DAHDIDIALTIMEOUT)
+    same => n,Hangup()
+
+;
+;	140	hall serviço malhorca 1S
+;
+exten => 140,1,NoOp(Malhorca1S)
+    same => n,Verbose(,Ramal 140 ${EXTEN})
+    same => n,SayDigits(${EXTEN})
+    same => n,Dial(${Islas}/140,DAHDIDIALTIMEOUT)
+    same => n,Hangup()
+
+;
+;	150 	hall serviço malhorca 2S
+;
+exten => 150,1,NoOp(SalaoMallorca)
+    same => n,Verbose(,Ramal 150 ${EXTEN})
+    same => n,SayDigits(${EXTEN})
+    same => n,Dial(${Islas}/150,DAHDIDIALTIMEOUT)
+    same => n,Hangup()
+
+;
+;	280 	hall social entrada 2S
+;
+exten => 280,1,NoOp(EntradaSocial)
+    same => n,Verbose(,Ramal 280 ${EXTEN})
+    same => n,SayDigits(${EXTEN})
+    same => n,Dial(${Islas}/280,DAHDIDIALTIMEOUT)
+    same => n,Hangup()
+
+;
+; torre = 1 ou 2 andar de 2 a 9 final = 1 ou 2
+;
+exten => _[12][2-9][12],1,NoOp(Islas andar 2 a 9)
+    same => n,Verbose(,Ate o nono andar ISLAS)
+    same => n,Verbose(,Vai ligar para ${EXTEN})
+    same => n,SayDigits(${EXTEN})
+    same => n,Dial(${Islas}/${EXTEN},30)
+
+;
+; torre = 1 ou 2 andar de 10 a 19 final = 1 ou 2
+;
+exten => _[12]1[0-9][12],1,NoOp(Islas andar 10 a 19)
+    same => n,Verbose(,Ate o nono andar ISLAS)
+    same => n,Verbose(,Vai ligar para ${EXTEN})
+    same => n,SayDigits(${EXTEN})
+    same => n,Dial(${Islas}/${EXTEN},30)
+
+;
+; torre = 1 ou 2 andar de 20 a 26 final = 1 ou 2
+;
+exten => _[12]0[0-6][12],1,NoOp(Islas andar 10 a 19)
+    same => n,Verbose(,Ate o nono andar ISLAS)
+    same => n,Verbose(,Vai ligar para ${EXTEN})
+    same => n,SayDigits(${EXTEN})
+    same => n,Dial(${Islas}/${EXTEN},30)
+
+; fim de extensions.conf
