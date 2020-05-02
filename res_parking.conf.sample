@@ -1,6 +1,4 @@
 [general]
-parkeddynamic = no
-
 ;parkeddynamic = yes            ; Enables dynamically created parkinglots. (default is no)
                                 ; If the option is enabled then the following
                                 ; variables can be used to dynamically create
@@ -64,14 +62,14 @@ parkpos => 701-720              ; What range of parking spaces to use - must be 
                                 ; Since this value is interpreted numerically, leading 0's
                                 ; will be ignored (so expect 00700-00720 to map to 700-720)
 
-context => parked
+context => parkedcalls          ; Which context parked calls and the default park
 
 ;parkinghints = no              ; Add hints priorities automatically for parkpos
                                 ; extensions if parkext is set
 
-parkingtime => 45              ; Number of seconds a call can be parked before returning
+;parkingtime => 45              ; Number of seconds a call can be parked before returning
 
-comebacktoorigin = yes         ; Setting this option configures the behavior of call parking when the
+;comebacktoorigin = yes         ; Setting this option configures the behavior of call parking when the
                                 ; parked call times out (See the parkingtime option).  The default value is 'yes'.
                                 ;
                                 ; 'yes' - When the parked call times out, attempt to send the call back to the peer
@@ -108,7 +106,7 @@ comebacktoorigin = yes         ; Setting this option configures the behavior of 
                                 ; PARKEDLOT - name of the lot that the call was parked in prior to timing out
                                 ; PARKER - dial string to call the device that parked the call
 
-comebackdialtime = 30          ; When a parked call times out, this is the number of seconds to dial the device that
+;comebackdialtime = 30          ; When a parked call times out, this is the number of seconds to dial the device that
                                 ; originally parked the call.  It is also available as a channel variable COMEBACKDIALTIME
                                 ; after a parked call has timed out.
                                 ; The default value is 30 seconds.
@@ -117,27 +115,27 @@ comebackdialtime = 30          ; When a parked call times out, this is the numbe
                                 ; The context a timed out call will return to if comebcktoorigin=no.
                                 ; The default value is 'parkedcallstimeout'.
 
-courtesytone = beep            ; Sound file to play to when someone picks up a parked call
+;courtesytone = beep            ; Sound file to play to when someone picks up a parked call
                                 ; and also when the Touch Monitor is activated/deactivated.
                                 ; Default is no tone.
 
-parkedplay = caller            ; Who to play courtesytone to when picking up a parked call.
+;parkedplay = caller            ; Who to play courtesytone to when picking up a parked call.
                                 ; One of: parked, caller, both  (default is caller)
 
-parkedcalltransfers = caller   ; Enables or disables DTMF based transfers when picking up a parked call.
+;parkedcalltransfers = caller   ; Enables or disables DTMF based transfers when picking up a parked call.
                                 ; one of: callee, caller, both, no (default is no)
 
-parkedcallreparking = caller   ; Enables or disables DTMF based parking when picking up a parked call.
+;parkedcallreparking = caller   ; Enables or disables DTMF based parking when picking up a parked call.
                                 ; one of: callee, caller, both, no (default is no)
 
-parkedcallhangup = caller      ; Enables or disables DTMF based hangups when picking up a parked call.
+;parkedcallhangup = caller      ; Enables or disables DTMF based hangups when picking up a parked call.
                                 ; one of: callee, caller, both, no (default is no)
 
-findslot => next               ; Sets the method for selecting parking spaces when a call is parked
+;findslot => next               ; Sets the method for selecting parking spaces when a call is parked
                                 ; 'next' - use the next parking space from the most recently used one.
                                 ; 'first' - use the lowest numbered parking space available
 
-parkedmusicclass = default     ; This is the MOH class to use for the parked channel
+;parkedmusicclass = default     ; This is the MOH class to use for the parked channel
                                 ; as long as the class is not set on the channel directly
                                 ; using Set(CHANNEL(musicclass)=whatever) in the dialplan
 
